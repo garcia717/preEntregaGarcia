@@ -3,14 +3,11 @@ let userName = prompt('¡Hola! Por favor ingresa tu nombre de usuario');
 let password = parseInt(prompt(`¡Bienvenido ${userName}! Por favor ingresa tu contraseña, recuerda solo tienes 3 intentos`));
 let trys = 0
 let correct = false
-let seguirComprando = true
-let totalCompra = 0
 if (password === 1234) {
     alert (`¡Maneja tu tienda ${userName}!`)
-    purchase()
 } else  if(password !== 1234){
     while (password !== 1234 && trys < 2){ 
-        purchase()
+        let attemp =parseInt(prompt(`Contraseña incorrecta ${userName}, intenta de nuevo`))
         if (attemp === 1234){
             correct = true
             alert (`¡Maneja tu tienda ${userName}!`)
@@ -24,8 +21,6 @@ if(trys === 2){
 }
 }
 }
-logIn()
-
 function purchase(){
     let continueBuy = true
     let total = 0
@@ -54,6 +49,8 @@ function purchase(){
         alert('mamalo')
       }
     }
+    logIn()
+    purchase()
 
 
 
