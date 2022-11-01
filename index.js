@@ -57,6 +57,9 @@ function purchase(){
         productSelector = prompt('Por favor selecciona tu producto, P1; P2; P3 o P4').toUpperCase()
 
       }
+    }else{
+      grandTotal = cart.map(product=>product.price).reduce((a,b)=>a+b)
+      alert(`total ${grandTotal}`)
     }
   }
     logIn()
