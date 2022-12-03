@@ -3,7 +3,6 @@ const titulo = document.getElementById('title')
 const nombreUsuario = document.getElementById('nombre')
 const apellidoUsuario = document.getElementById('apellido')
 const infoUsuario = {}
-
 formularioUsuario.onsubmit = (e) =>{
     e.preventDefault()
     infoUsuario.nombre = nombreUsuario.value
@@ -20,6 +19,17 @@ function cerrar() {
   div = document.getElementById('obj1');
   div.style.display = 'none';
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
