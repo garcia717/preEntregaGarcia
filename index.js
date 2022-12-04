@@ -18,12 +18,13 @@ function verificar() {
   }
 }
 
-const time = async() => {
-  const clientTime = await fetch('http://worldtimeapi.org/api/ip')
-  const theTime = await clientTime.json()
-}
-// const showtime = document.getElementById("time");
-// showtime.innerHTML = <spam>`${time}`</spam>
+const getTime = async () => {
+  const clientTime = await fetch("https://worldtimeapi.org/api/ip");
+  const {
+    datetime
+  } = await clientTime.json();
+  return datetime;
+};
 
 const formularioUsuario = document.getElementById("formulario");
 const titulo = document.getElementById("title");
@@ -31,7 +32,7 @@ const nombreUsuario = document.getElementById("nombre");
 const apellidoUsuario = document.getElementById("apellido");
 const infoUsuario = {};
 
-// crear datos
+
 const productsArray = [];
 const product1 = new NewProduct("P1", "Producto1", 100.0, 10);
 productsArray.push(product1);
@@ -42,7 +43,7 @@ productsArray.push(product3);
 const product4 = new NewProduct("P4", "Producto4", 500.0, 10);
 productsArray.push(product4);
 
-//  dibujar datos
+
 const divProducts = document.querySelector("#products");
 productsArray.forEach((product) => {
   divProducts.innerHTML += `
@@ -66,68 +67,65 @@ buttonsAdd.forEach((button) => {
   button.onclick = () => {
     const productCart = productsArray.find((prod) => {
       return prod.id === button.id;
-      
     });
-    
-    const indexCart = cart.findIndex((prod) => prod.id === productCart.id);
 
-    if (indexCart === -1) {
-      productCart.cantidad = 1;
-      cart.push(productCart); // LO AGREGO
-      const totalBuy = cart
-      .map((prod) => prod.price * prod.cantidad)
-      .reduce((elem1, elem2) => elem1 + elem2)
-      Swal.fire({
-        title: `Agregaste un  ${productCart.name} al carrito,  quieres seguir?`,
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Sí',
-        denyButtonText: `No`,
-      }).then((result) => {
-        /* Read more about isConfirmed, isDenied below */
-        if (result.isConfirmed) {
-          Swal.fire('¡Continua comprando!', '', 'success')
-        } else if (result.isDenied) {
-          Swal.fire(`Tu total a pagar es de U$$${totalBuy}`,'', 'info')
+    Swal.fire({
+      title: `Agregaste un ${productCart.name} al carrito, quieres seguir?`,
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Sí",
+      denyButtonText: `No`,
+    }).then((result) => {
+      const {
+        isConfirmed,
+        isDenied,
+        isDismissed
+      } = result;
+      if (!isDismissed) {
+
+        const indexCart = cart.findIndex((prod) => prod.id === productCart.id);
+        if (indexCart === -1) {
+          productCart.cantidad = 1;
+          cart.push(productCart); // LO AGREGO
+        } else {
+          cart[indexCart].cantidad += 1;
         }
-      })
-    } else {
-      cart[indexCart].cantidad += 1;
-      // alert(`$$${productCart.price} ${cart[indexCart].cantidad}`);
-      const totalBuy = cart
-      .map((prod) => prod.price * prod.cantidad)
-      .reduce((elem1, elem2) => elem1 + elem2)
-      Swal.fire({
-        title: `Agregaste un  ${productCart.name} al carrito,  quieres seguir?`,
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Sí',
-        denyButtonText: `No`,
-      }).then((result) => {
-        /* Read more about isConfirmed, isDenied below */
-        if (result.isConfirmed) {
-          Swal.fire('¡Continua comprando!', '', 'success')
-        } else if (result.isDenied) {
-          Swal.fire(`Tu total a pagar es de U$$${totalBuy}`, '', 'info')
-        }
-      })
-    }
-    console.log(cart);
+        const totalBuy = calculame(cart);
+        isConfirmed
+          ?
+          Swal.fire("¡Continua comprando!", "", "success") :
+          Swal.fire(`Tu total a pagar es de U$$${totalBuy}`, "", "info");
+      }
+    });
+
+    return;
   };
 });
-
-
+const calculame = (cart) => {
+  return cart.reduce((retorno, {
+    price,
+    cantidad
+  }) => {
+    return retorno + price * cantidad;
+  }, 0);
+};
 
 formularioUsuario.onsubmit = (e) => {
   e.preventDefault();
   infoUsuario.nombre = nombreUsuario.value;
   infoUsuario.apellido = apellidoUsuario.value;
   localStorage.setItem("infoUsuario", JSON.stringify(infoUsuario));
-
-  verificar(); // #verificar cuando registres usuario;
+  verificar();
+  getTime().then((datetime) => {
+    const showtime = document.getElementById("time");
+    showtime.innerHTML = `<span>${datetime}</span>`;
+  });
 };
-
-verificar(); // #verificar cuando visites la pagina...
+const finalizar = () => {
+  const totalBuy = calculame(cart);
+  Swal.fire(`Tu total a pagar es de U$$${totalBuy}`, "", "info");
+};
+verificar();
 
 
 
